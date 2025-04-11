@@ -35,11 +35,8 @@ def lossless_rotate_jpeg_jpegtran(image_path, rotation_degrees):
     """Losslessly rotates a JPEG using jpegtran (truly lossless)."""
 
     try:
-        rotation_map = {0: 0, 90: 90, 180: 180, 270: 270}  # jpegtran uses degrees directly
-        if rotation_degrees not in rotation_map:
+        if rotation_degrees not in [0, 90, 180, 270]:
             raise ValueError("Rotation must be 0, 90, 180, or 270.")
-
-        rotation = rotation_map[rotation_degrees]
 
         base_name, ext = os.path.splitext(image_path)
         new_image_path = f"{base_name}-rot{ext}"
@@ -48,13 +45,12 @@ def lossless_rotate_jpeg_jpegtran(image_path, rotation_degrees):
         command = [
             r"jpegtran",  # Path to jpegtran (adjust if needed)
             "-copy", "all", # Copy all metadata
-            "-rotate", str(rotation),
+            "-rotate", str(rotation_degrees),
             image_path,
             new_image_path
         ]
 
         subprocess.run(command, check=True)
-
         #print(f"Image rotated (losslessly) and saved as {new_image_path}")
 
     except FileNotFoundError:
